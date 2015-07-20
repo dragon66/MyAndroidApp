@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 		try {
 			_8BIM thumbnail = null;
 			metadataMap = Metadata.readMetadata(fin);
-			IRB irb = (IRB)metadataMap.get(MetadataType.PHOTOSHOP);
+			IRB irb = (IRB)metadataMap.get(MetadataType.PHOTOSHOP_IRB);
 			if(irb != null)
 				thumbnail = irb.getThumbnailResource();
 			if(thumbnail == null) {
@@ -78,9 +78,9 @@ public class MainActivity extends Activity {
 			_8BIM versionInfo = new VersionInfo(1, true, "Writer", "Reader", 1);
 			// Insert IPTC_NAA 8BIM
 			IPTC_NAA iptc = new IPTC_NAA();
-			iptc.addDataSet(new IPTCDataSet(IPTCRecord.APPLICATION, IPTCApplicationTag.COPYRIGHT_NOTICE.getTag(), "Copyright 2014-2015, yuwen_66@yahoo.com"));
-			iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
-			iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.CATEGORY.getTag(), "ICAFE"));
+			iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2015, yuwen_66@yahoo.com"));
+			iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));
+			iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.CATEGORY, "ICAFE"));
 			
 			Metadata.insertIRB(fin2, fout, Arrays.asList(jpegQuality, thumbnail, versionInfo, iptc), true);
 			fin.close();
