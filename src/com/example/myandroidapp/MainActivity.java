@@ -31,7 +31,6 @@ import pixy.meta.exif.JpegExif;
 import pixy.meta.exif.TiffExif;
 import pixy.meta.iptc.IPTCApplicationTag;
 import pixy.meta.iptc.IPTCDataSet;
-import pixy.meta.iptc.IPTCRecord;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
