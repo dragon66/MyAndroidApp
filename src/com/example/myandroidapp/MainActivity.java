@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.example.myandroidapp.R;
+import com.github.dragon66.AnimatedGIFReader;
 
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.TiffTag;
@@ -99,6 +100,19 @@ public class MainActivity extends Activity {
 			Bitmap bMap = BitmapFactory.decodeByteArray(fout.toByteArray(), 0, fout.toByteArray().length);
 			image.setImageBitmap(bMap);
 		}
+		
+		InputStream fin3 = getResources().openRawResource(
+	            getResources().getIdentifier("comederos",
+	            "raw", getPackageName()));
+		AnimatedGIFReader reader = new AnimatedGIFReader();
+		
+		try {
+			Bitmap bmp = reader.read(fin3);
+			image.setImageBitmap(reader.getFrame(0));
+			fin3.close();
+		} catch (Exception e) {
+			image.setImageResource(R.drawable.ic_launcher);
+		}		
     }
 	
 	@Override
