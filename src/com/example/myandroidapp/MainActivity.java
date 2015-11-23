@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
 		
 		try {
 			Bitmap bmp = reader.read(fin3);
-			image.setImageBitmap(reader.getFrame(0));
+			image.setImageBitmap(reader.getFrame(1));
 			fin3.close();
 		} catch (Exception e) {
 			image.setImageResource(R.drawable.ic_launcher);
