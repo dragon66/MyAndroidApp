@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    24Nov2015  Revised to only do SRC_OVER if needed
  * WY    22Nov2015  Initial creation
  */
 
@@ -146,31 +147,38 @@ public class AnimatedGIFReader {
 		baseImage.getPixels(colors, 0, maxWidth, image_x, image_y, maxWidth, maxHeight);
 		backup.setPixels(colors, 0, maxWidth, 0, 0, maxWidth, maxHeight);
 		/* End of backup */
-		// Draw this frame to the base
+		// Grab the pixels of the current frame
 		colors = new int[maxWidth*maxHeight];
 		bmp.getPixels(colors, 0, maxWidth, 0, 0, maxWidth, maxHeight);
-		// Do SRC_OVER alpha composite
-		int[] baseColors = new int[logicalScreenWidth*logicalScreenHeight];
-		baseImage.getPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
-		for(int i = 0; i < maxHeight; i++) {
-			for(int j = 0; j < maxWidth; j++) {
-				int src_index = j + i*maxWidth;
-				int dst_index = image_x + j + (image_y + i)*logicalScreenWidth;
-				int src_alpha = (colors[src_index]>>24)&0xff;
-				float src_alpha_normal = src_alpha/255.f;
-				int dst_alpha = (baseColors[dst_index]>>24)&0xff;
-				float dst_alpha_normal = 1.0f - src_alpha_normal;
-				int red = (int)(src_alpha_normal*((colors[src_index]>>16)&0xff) + dst_alpha_normal*((baseColors[dst_index]>>16)&0xff));
-				int green = (int)(src_alpha_normal*((colors[src_index]>>8)&0xff) + dst_alpha_normal*((baseColors[dst_index]>>8)&0xff));
-				int blue = (int)(src_alpha_normal*(colors[src_index]&0xff) + dst_alpha_normal*(baseColors[dst_index]&0xff));
-				int alpha = (int)(src_alpha_normal*src_alpha + dst_alpha_normal*dst_alpha);
-				baseColors[dst_index] = (alpha<<24)|(red<<16)|(green<<8)|blue;
-			}
-		}
-		// End of SRC_OVER alpha composite
-		baseImage.setPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
 		// We need to clone the base image since we are going to dispose it later according to the disposal method
 		Bitmap clone = Bitmap.createBitmap(logicalScreenWidth, logicalScreenHeight, Bitmap.Config.ARGB_8888);
+		int[] baseColors = new int[logicalScreenWidth*logicalScreenHeight];
+		// Draw this frame to the base
+		if(disposalMethod == 1 || disposalMethod == 0) {
+			// Do SRC_OVER alpha composite
+			baseImage.getPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
+			for(int i = 0; i < maxHeight; i++) {
+				for(int j = 0; j < maxWidth; j++) {
+					int src_index = j + i*maxWidth;
+					int dst_index = image_x + j + (image_y + i)*logicalScreenWidth;
+					int src_alpha = (colors[src_index]>>24)&0xff;
+					float src_alpha_normal = src_alpha/255.f;
+					int dst_alpha = (baseColors[dst_index]>>24)&0xff;
+					float dst_alpha_normal = 1.0f - src_alpha_normal;
+					int red = (int)(src_alpha_normal*((colors[src_index]>>16)&0xff) + dst_alpha_normal*((baseColors[dst_index]>>16)&0xff));
+					int green = (int)(src_alpha_normal*((colors[src_index]>>8)&0xff) + dst_alpha_normal*((baseColors[dst_index]>>8)&0xff));
+					int blue = (int)(src_alpha_normal*(colors[src_index]&0xff) + dst_alpha_normal*(baseColors[dst_index]&0xff));
+					int alpha = (int)(src_alpha_normal*src_alpha + dst_alpha_normal*dst_alpha);
+					baseColors[dst_index] = (alpha<<24)|(red<<16)|(green<<8)|blue;
+				}
+			}
+			// End of SRC_OVER alpha composite
+			baseImage.setPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
+		} else { // Do SRC alpha composite
+			baseImage.setPixels(colors, 0, maxWidth, image_x, image_y, maxWidth, maxHeight);
+			baseImage.getPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
+		}		
+		// Clone the base image
 		clone.setPixels(baseColors.clone(), 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
 		// Check about disposal method to take action accordingly
 		if(disposalMethod == 1 || disposalMethod == 0) // Leave in place or unspecified
