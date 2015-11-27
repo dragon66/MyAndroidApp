@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    26Nov2015  Replace multiplication with adding
  * WY    24Nov2015  Revised to only do SRC_OVER if needed
  * WY    22Nov2015  Initial creation
  */
@@ -157,10 +158,10 @@ public class AnimatedGIFReader {
 		if(disposalMethod == 1 || disposalMethod == 0) {
 			// Do SRC_OVER alpha composite
 			baseImage.getPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
-			for(int i = 0; i < maxHeight; i++) {
+			for(int i = 0, offset = 0, offset1 = image_y*logicalScreenWidth; i < maxHeight; i++, offset += maxWidth, offset1 += logicalScreenWidth) {
 				for(int j = 0; j < maxWidth; j++) {
-					int src_index = j + i*maxWidth;
-					int dst_index = image_x + j + (image_y + i)*logicalScreenWidth;
+					int src_index = j + offset;
+					int dst_index = image_x + j + offset1;
 					int src_alpha = (colors[src_index]>>24)&0xff;
 					float src_alpha_normal = src_alpha/255.f;
 					int dst_alpha = (baseColors[dst_index]>>24)&0xff;
@@ -170,7 +171,7 @@ public class AnimatedGIFReader {
 					int blue = (int)(src_alpha_normal*(colors[src_index]&0xff) + dst_alpha_normal*(baseColors[dst_index]&0xff));
 					int alpha = (int)(src_alpha_normal*src_alpha + dst_alpha_normal*dst_alpha);
 					baseColors[dst_index] = (alpha<<24)|(red<<16)|(green<<8)|blue;
-				}
+				}				
 			}
 			// End of SRC_OVER alpha composite
 			baseImage.setPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
