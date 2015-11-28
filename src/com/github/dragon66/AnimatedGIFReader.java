@@ -158,10 +158,10 @@ public class AnimatedGIFReader {
 		if(disposalMethod == 1 || disposalMethod == 0) {
 			// Do SRC_OVER alpha composite
 			baseImage.getPixels(baseColors, 0, logicalScreenWidth, 0, 0, logicalScreenWidth, logicalScreenHeight);
-			for(int i = 0, offset = 0, offset1 = image_y*logicalScreenWidth; i < maxHeight; i++, offset += maxWidth, offset1 += logicalScreenWidth) {
+			for(int i = 0, offset = 0, offset1 = image_x + image_y*logicalScreenWidth; i < maxHeight; i++, offset += maxWidth, offset1 += logicalScreenWidth) {
 				for(int j = 0; j < maxWidth; j++) {
 					int src_index = j + offset;
-					int dst_index = image_x + j + offset1;
+					int dst_index = j + offset1;
 					int src_alpha = (colors[src_index]>>24)&0xff;
 					float src_alpha_normal = src_alpha/255.f;
 					int dst_alpha = (baseColors[dst_index]>>24)&0xff;
