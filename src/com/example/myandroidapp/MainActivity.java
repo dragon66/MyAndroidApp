@@ -63,12 +63,12 @@ public class MainActivity extends Activity {
 				thumbnail = irb.getThumbnailResource();
 			if(thumbnail == null) {
 				Exif exif = (Exif)metadataMap.get(MetadataType.EXIF);
-				ExifThumbnail exifThumbnail = exif.getThumbnail();
+				Thumbnail exifThumbnail = exif.getThumbnail();
 				if(exifThumbnail != null) { // Convert ExifThumbnail to ThumbnailResource and insert into image
 					if(exifThumbnail.getRawImage() != null)
 						thumbnail = new ThumbnailResource(exifThumbnail.getRawImage());
 					else if(exifThumbnail.getDataType() == Thumbnail.DATA_TYPE_KJpegRGB)
-						thumbnail = new ThumbnailResource(ImageResourceID.THUMBNAIL_RESOURCE_PS5, exifThumbnail.getDataType(), exifThumbnail.getWidth(), exifThumbnail.getHeight(), exifThumbnail.getCompressedImage());
+						thumbnail = new ThumbnailResource(ImageResourceID.THUMBNAIL_RESOURCE_PS5, exifThumbnail);
 				}
 			}
 			// Insert JPEG quality 8BIM
